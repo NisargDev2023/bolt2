@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Smartphone, Check, X } from 'lucide-react';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -85,27 +84,9 @@ export default function InstallPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900">
       <div className="container mx-auto px-4 py-12 max-w-2xl">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-900 dark:bg-slate-100 mb-4">
-            <Smartphone className="w-10 h-10 text-white dark:text-slate-900" />
-          </div>
-          <h1 className="text-4xl font-bold mb-2">Install Our App</h1>
-          <p className="text-lg text-muted-foreground">
-            Add this app to your home screen for quick and easy access
-          </p>
-        </div>
-
-              <Download className="w-5 h-5" />
-              Add to Home Screen
-
-              Install this app on your device for a native app experience
-
             {isInstalled ? (
               <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0">
-                    <Check className="w-6 h-6 text-green-600 dark:text-green-400" />
-                  </div>
                   <div>
                     <h3 className="font-semibold text-green-900 dark:text-green-100">
                       App Already Installed
@@ -119,9 +100,6 @@ export default function InstallPage() {
             ) : installStatus === 'success' ? (
               <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0">
-                    <Check className="w-6 h-6 text-green-600 dark:text-green-400" />
-                  </div>
                   <div>
                     <h3 className="font-semibold text-green-900 dark:text-green-100">
                       Installation Successful!
@@ -135,9 +113,6 @@ export default function InstallPage() {
             ) : installStatus === 'dismissed' ? (
               <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0">
-                    <X className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                  </div>
                   <div>
                     <h3 className="font-semibold text-amber-900 dark:text-amber-100">
                       Installation Cancelled
@@ -156,7 +131,6 @@ export default function InstallPage() {
                 disabled={installStatus === 'installing'}
                 className="w-full"
               >
-                <Download className="w-5 h-5 mr-2" />
                 {installStatus === 'installing' ? 'Installing...' : 'Add to Home Screen'}
               </button>
             )}
@@ -185,45 +159,6 @@ export default function InstallPage() {
                 </div>
               </div>
             )}
-
-            <div className="border-t pt-6">
-              <h3 className="font-semibold mb-3">Benefits of Installing</h3>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium">Quick Access</p>
-                    <p className="text-sm text-muted-foreground">
-                      Launch directly from your home screen
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium">Offline Support</p>
-                    <p className="text-sm text-muted-foreground">
-                      Works even without an internet connection
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Check className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium">Full Screen Experience</p>
-                    <p className="text-sm text-muted-foreground">
-                      Runs like a native mobile app
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>
-            This is a Progressive Web App (PWA) that can be installed on your device
-          </p>
-        </div>
       </div>
     </div>
   );
