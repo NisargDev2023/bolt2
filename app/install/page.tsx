@@ -12,51 +12,51 @@ export default function InstallPage() {
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [installStatus, setInstallStatus] = useState<'idle' | 'installing' | 'success' | 'dismissed'>('idle');
+  const [checkingInstallability, setCheckingInstallability] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered successfully:', registration);
-        })
-        .catch((error) => {
-          console.error('Service Worker registration failed:', error);
-        });
-    }
-
-    const handler = (e: Event) => {
-      e.preventDefault();
-      const promptEvent = e as BeforeInstallPromptEvent;
-      setDeferredPrompt(promptEvent);
-      setIsInstallable(true);
-      console.log('beforeinstallprompt event fired');
+    const syncPrompt = () => {
+      const prompt = (window as any).__A2HS_PROMPT__;
+      if (prompt && !deferredPrompt) {
+        setDeferredPrompt(prompt);
+        setIsInstallable(true);
+        setCheckingInstallability(false);
+        console.log("[A2HS] prompt synced to page");
+      }
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
+    // 1️⃣ immediate check
+    syncPrompt();
+
+    // 2️⃣ check after page becomes visible (Chrome fires late sometimes)
+    document.addEventListener("visibilitychange", syncPrompt);
+
+    const timeout = setTimeout(() => {
+      syncPrompt();
+      setCheckingInstallability(false); // 👈 stop loader even if not installable
+    }, 1500);
 
     const installedHandler = () => {
       setIsInstalled(true);
       setIsInstallable(false);
-      setInstallStatus('success');
-      console.log('PWA was installed');
+      setInstallStatus("success");
+      setCheckingInstallability(false);
     };
 
-    window.addEventListener('appinstalled', installedHandler);
+    window.addEventListener("appinstalled", installedHandler);
 
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (window.matchMedia("(display-mode: standalone)").matches) {
       setIsInstalled(true);
       setIsInstallable(false);
-      console.log('App is in standalone mode');
+      setCheckingInstallability(false);
     }
 
-    console.log('Install page mounted');
-
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
-      window.removeEventListener('appinstalled', installedHandler);
+      clearTimeout(timeout);
+      document.removeEventListener("visibilitychange", syncPrompt);
+      window.removeEventListener("appinstalled", installedHandler);
     };
-  }, []);
+  }, [deferredPrompt]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) {
@@ -156,6 +156,17 @@ export default function InstallPage() {
                     <li><strong>iOS Safari:</strong> Tap Share → Add to Home Screen</li>
                     <li><strong>Android Chrome:</strong> Tap Menu → Add to Home Screen</li>
                   </ul>
+                </div>
+              </div>
+            )}
+
+            {checkingInstallability && (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <div className="animate-spin h-8 w-8 rounded-full border-4 border-slate-300 border-t-slate-800 mx-auto mb-4" />
+                  <p className="text-sm text-muted-foreground">
+                    Checking installation availability…
+                  </p>
                 </div>
               </div>
             )}

@@ -1,6 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { useEffect } from 'react';
+import ClientInstallListener from './listnerhook';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,21 +22,6 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'A2H App',
   },
-  openGraph: {
-    images: [
-      {
-        url: 'https://bolt.new/static/og_default.png',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    images: [
-      {
-        url: 'https://bolt.new/static/og_default.png',
-      },
-    ],
-  },
 };
 
 export default function RootLayout({
@@ -48,7 +35,10 @@ export default function RootLayout({
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ClientInstallListener />
+        {children}
+      </body>
     </html>
   );
 }
